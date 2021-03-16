@@ -12,3 +12,6 @@ target
 
 # Serverless directories
 .serverless
+
+# database parameters
+config.dev.json

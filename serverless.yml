@@ -1,4 +1,3 @@
-
 service: backend-java-api-user
 frameworkVersion: '2'
 
@@ -10,6 +9,11 @@ provider:
   profile: serverless-sunshine
   apiGateway:
     shouldStartNameWithService: true
+  environment:
+    DB_HOST: ${file(./config.dev.json):DB_HOST}
+    DB_NAME: ${file(./config.dev.json):DB_NAME}
+    DB_USER: ${file(./config.dev.json):DB_USER}
+    DB_PASSWORD: ${file(./config.dev.json):DB_PASSWORD}
 
 package:
   artifact: target/users-api-java-dev.jar

@@ -1,4 +1,4 @@
-package model;
+package com.sunshine.model;
 
 public class User {
     private String id;
@@ -6,7 +6,7 @@ public class User {
     private String userName;
     private String password;
 
-    public User() {}
+    public User(String id, String userName, String password) {}
 
     public User(String id, String email, String userName,String  password) {
         this.id = id;
