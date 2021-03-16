@@ -21,3 +21,9 @@ functions:
       - http:
           path: /users/{email}/user
           method: get
+  save-user-api:
+    handler: com.sunshine.SaveUserHandler
+    events:
+      - http:
+          path: /users/{email}/user
+          method: post
