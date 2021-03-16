@@ -15,8 +15,8 @@ package:
   artifact: target/users-api-java-dev.jar
 
 functions:
-  user-api:
-    handler: com.sunshine.Handler
+  get-user-api:
+    handler: com.sunshine.GetUserHandler
     events:
       - http:
           path: /users/{email}/user
