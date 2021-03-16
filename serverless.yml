@@ -19,5 +19,5 @@ functions:
     handler: com.sunshine.Handler
     events:
       - http:
-          path: user
+          path: /users/{email}/user
           method: get
