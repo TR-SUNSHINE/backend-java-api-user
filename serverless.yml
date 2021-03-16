@@ -8,9 +8,11 @@ provider:
   lambdaHashingVersion: 20201221
   region: us-west-2
   profile: serverless-sunshine
+  apiGateway:
+    shouldStartNameWithService: true
 
 package:
-  artifact: target/hello-dev.jar
+  artifact: target/users-api-java-dev.jar
 
 functions:
   user-api:
