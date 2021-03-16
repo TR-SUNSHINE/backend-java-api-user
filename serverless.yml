@@ -14,7 +14,7 @@ package:
 
 functions:
   user-api:
-    handler: com.serverless.Handler
+    handler: com.sunshine.Handler
     events:
       - http:
           path: user

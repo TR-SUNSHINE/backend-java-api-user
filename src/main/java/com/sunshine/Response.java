@@ -1,4 +1,4 @@
-package com.serverless;
+package com.sunshine;
 
 import java.util.Map;
 
