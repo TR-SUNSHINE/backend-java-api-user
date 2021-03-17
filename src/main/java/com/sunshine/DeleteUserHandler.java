@@ -11,28 +11,24 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.sql.*;
-import java.util.UUID;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
-public class SaveUserHandler implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
+public class DeleteUserHandler implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
 
-	private static final Logger LOG = LogManager.getLogger(SaveUserHandler.class);
+	private static final Logger LOG = LogManager.getLogger(DeleteUserHandler.class);
+
 	private Connection connection = null;
 	private PreparedStatement preparedStatement = null;
 	private ResultSet resultSet = null;
 
 	@Override
 	public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent request, Context context) {
-		LOG.info("received: the request");
+		LOG.info("received the request");
 
-		String email = request.getPathParameters().get("email");
-		String userName = request.getPathParameters().get("userName");
-		LOG.debug("will create user: "+ userName + email);
+		String userId = request.getPathParameters().get("userId");
 
-		String requestBody = request.getBody();
-
-		ObjectMapper objMapper = new ObjectMapper();
 		APIGatewayProxyResponseEvent response = new APIGatewayProxyResponseEvent();
 		response.setStatusCode(200);
 		Map<String, String> headers = new HashMap<>();
@@ -40,10 +36,6 @@ public class SaveUserHandler implements RequestHandler<APIGatewayProxyRequestEve
 		response.setHeaders(headers);
 
 		try {
-			User u = objMapper.readValue(requestBody,User.class);
-
-			LOG.debug("Created user"+ userName + email);
-			response.setBody("User created");
 
 			Class.forName("com.mysql.jdbc.Driver");
 
@@ -53,16 +45,12 @@ public class SaveUserHandler implements RequestHandler<APIGatewayProxyRequestEve
 					System.getenv("DB_USER"),
 					System.getenv("DB_PASSWORD")));
 
-			preparedStatement = connection.prepareStatement("INSERT INTO user VALUES (?, ?, ?, ?)");
-			preparedStatement.setString(1, UUID.randomUUID().toString());
-			preparedStatement.setString(2, email);
-			preparedStatement.setString(3, userName);
-			preparedStatement.setString(4, u.getPassword());
-			preparedStatement.execute();
-			connection.close();
+			preparedStatement = connection.prepareStatement("DELETE FROM user WHERE userID = ? AND userId = ?");
+			preparedStatement.setString(1, userId);
 
-		} catch (IOException e) {
-			LOG.error("Unable to unmarshal JSON for adding a user", e);
+			preparedStatement.execute();
+
+			connection.close();
 		} catch (ClassNotFoundException e) {
 			LOG.error("ClassNotFoundException", e);
 		} catch (SQLException throwables) {
@@ -73,6 +61,7 @@ public class SaveUserHandler implements RequestHandler<APIGatewayProxyRequestEve
 		}
 		return response;
 	}
+
 	private void closeConnection() {
 		try {
 			if (resultSet != null) {

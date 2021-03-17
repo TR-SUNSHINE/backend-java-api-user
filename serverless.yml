@@ -16,7 +16,7 @@ provider:
     DB_PASSWORD: ${file(./config.dev.json):DB_PASSWORD}
 
 package:
-  artifact: target/users-api-java-dev.jar
+  artifact: target/user-api-java-dev.jar
 
 functions:
   get-user-api:
@@ -25,9 +25,18 @@ functions:
       - http:
           path: /user/{email}
           method: get
+          cors: true
   save-user-api:
     handler: com.sunshine.SaveUserHandler
     events:
       - http:
-          path: /user/{userName}/email/{email1}
+          path: /user/{email}/name/{userName}
           method: post
+          cors: true
+  delete-user-api:
+    handler: com.sunshine.DeleteUserHandler
+    events:
+      - http:
+          path: /user/{userID}
+          method: delete
+          cors: true
