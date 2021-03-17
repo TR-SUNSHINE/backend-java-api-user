@@ -6,14 +6,22 @@ public class User {
     private String userName;
     private String password;
 
-    public User(String id, String userName, String password) {}
+    public User() {}
 
-    public User(String id, String email, String userName,String  password) {
+    public User(String id, String email, String userName) {
+        this.id = id;
+        this.email = email;
+        this.userName = userName;
+        this.password = "not required";
+    }
+
+    public User(String id, String email, String userName,String password) {
         this.id = id;
         this.email = email;
         this.userName = userName;
         this.password = password;
     }
+
 
     public String getId() {
         return id;
@@ -28,6 +36,6 @@ public class User {
     }
 
     public String getPassword() {
-        return password;
+        return "no password required";
     }
 }

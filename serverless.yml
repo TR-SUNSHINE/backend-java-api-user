@@ -5,7 +5,7 @@ provider:
   name: aws
   runtime: java8
   lambdaHashingVersion: 20201221
-  region: us-west-2
+  region: eu-west-2
   profile: serverless-sunshine
   apiGateway:
     shouldStartNameWithService: true
@@ -23,11 +23,11 @@ functions:
     handler: com.sunshine.GetUserHandler
     events:
       - http:
-          path: /users/{email}/user
+          path: /user/{email}
           method: get
   save-user-api:
     handler: com.sunshine.SaveUserHandler
     events:
       - http:
-          path: /users/{email}/user
+          path: /user/{userName}/email/{email1}
           method: post
