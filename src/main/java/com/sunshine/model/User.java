@@ -36,6 +36,6 @@ public class User {
     }
 
     public String getPassword() {
-        return "no password required";
+        return password;
     }
 }

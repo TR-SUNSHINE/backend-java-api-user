@@ -23,20 +23,20 @@ functions:
     handler: com.sunshine.GetUserHandler
     events:
       - http:
-          path: /user/{email}
+          path: /users/{email}/user
           method: get
           cors: true
   save-user-api:
     handler: com.sunshine.SaveUserHandler
     events:
       - http:
-          path: /user/{email}/name/{userName}
+          path: /user/{userDetails}/user
           method: post
           cors: true
-  delete-user-api:
-    handler: com.sunshine.DeleteUserHandler
-    events:
-      - http:
-          path: /user/{userID}
-          method: delete
-          cors: true
+#  delete-user-api:
+#    handler: com.sunshine.DeleteUserHandler
+#    events:
+#      - http:
+#          path: /user/{userID}
+#          method: delete
+#          cors: true

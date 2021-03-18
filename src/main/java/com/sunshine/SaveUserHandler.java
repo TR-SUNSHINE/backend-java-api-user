@@ -26,25 +26,23 @@ public class SaveUserHandler implements RequestHandler<APIGatewayProxyRequestEve
 	public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent request, Context context) {
 		LOG.info("received: the request");
 
-		String email = request.getPathParameters().get("email");
-		String userName = request.getPathParameters().get("userName");
-		LOG.debug("will create user: "+ userName + email);
-
+		String userDetails = request.getPathParameters().get("userDetails");
 		String requestBody = request.getBody();
+
+		LOG.debug("will create user: "+ userDetails);
 
 		ObjectMapper objMapper = new ObjectMapper();
 		APIGatewayProxyResponseEvent response = new APIGatewayProxyResponseEvent();
 		response.setStatusCode(200);
+
 		Map<String, String> headers = new HashMap<>();
 		headers.put("Access-Control-Allow-Origin", "*");
 		response.setHeaders(headers);
 
 		try {
 			User u = objMapper.readValue(requestBody,User.class);
-
-			LOG.debug("Created user"+ userName + email);
 			response.setBody("User created");
-
+			LOG.debug("saved user: " + u.getUserName() + " " + u.getEmail());
 			Class.forName("com.mysql.jdbc.Driver");
 
 			connection = DriverManager.getConnection(String.format("jdbc:mysql://%s/%s?user=%s&password=%s",
@@ -55,8 +53,8 @@ public class SaveUserHandler implements RequestHandler<APIGatewayProxyRequestEve
 
 			preparedStatement = connection.prepareStatement("INSERT INTO user VALUES (?, ?, ?, ?)");
 			preparedStatement.setString(1, UUID.randomUUID().toString());
-			preparedStatement.setString(2, email);
-			preparedStatement.setString(3, userName);
+			preparedStatement.setString(2, u.getEmail());
+			preparedStatement.setString(3, u.getUserName());
 			preparedStatement.setString(4, u.getPassword());
 			preparedStatement.execute();
 			connection.close();

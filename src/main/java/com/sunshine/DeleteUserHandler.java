@@ -27,7 +27,7 @@ public class DeleteUserHandler implements RequestHandler<APIGatewayProxyRequestE
 	public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent request, Context context) {
 		LOG.info("received the request");
 
-		String userId = request.getPathParameters().get("userId");
+		String userId = request.getPathParameters().get("userID");
 
 		APIGatewayProxyResponseEvent response = new APIGatewayProxyResponseEvent();
 		response.setStatusCode(200);
@@ -45,7 +45,7 @@ public class DeleteUserHandler implements RequestHandler<APIGatewayProxyRequestE
 					System.getenv("DB_USER"),
 					System.getenv("DB_PASSWORD")));
 
-			preparedStatement = connection.prepareStatement("DELETE FROM user WHERE userID = ? AND userId = ?");
+			preparedStatement = connection.prepareStatement("DELETE FROM user WHERE userID = ? ");
 			preparedStatement.setString(1, userId);
 
 			preparedStatement.execute();
