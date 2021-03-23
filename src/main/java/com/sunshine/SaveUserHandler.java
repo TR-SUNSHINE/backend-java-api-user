@@ -4,6 +4,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sunshine.model.User;
 import org.apache.logging.log4j.LogManager;
@@ -59,7 +60,7 @@ public class SaveUserHandler implements RequestHandler<APIGatewayProxyRequestEve
 			preparedStatement.execute();
 
 			preparedStatement = connection.prepareStatement("SELECT * FROM user WHERE email = ?");
-			preparedStatement.setString(1, email);
+			preparedStatement.setString(1, u.getEmail());
 			resultSet = preparedStatement.executeQuery();
 
 			while (resultSet.next()) {
@@ -68,7 +69,6 @@ public class SaveUserHandler implements RequestHandler<APIGatewayProxyRequestEve
 						resultSet.getString("userName"));
 				users.add(user);
 			}
-			response.setBody("User selected back after inserted");
 			connection.close();
 
 
@@ -82,6 +82,16 @@ public class SaveUserHandler implements RequestHandler<APIGatewayProxyRequestEve
 		finally {
 			closeConnection();
 		}
+
+		ObjectMapper objectMapper = new ObjectMapper();
+		try {
+			String responseBody = objectMapper.writeValueAsString(users);
+			response.setBody(responseBody);
+		}
+		catch(JsonProcessingException e) {
+			LOG.error("Unable to marshall tasks array", e);
+		}
+
 		return response;
 	}
 	private void closeConnection() {
