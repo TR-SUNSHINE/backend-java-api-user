@@ -30,7 +30,7 @@ functions:
     handler: com.sunshine.SaveUserHandler
     events:
       - http:
-          path: /user/{userDetails}/user
+          path: /user/{email}/user
           method: post
           cors: true
 #  delete-user-api:

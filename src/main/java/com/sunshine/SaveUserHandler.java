@@ -11,9 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.sql.*;
-import java.util.UUID;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 
 public class SaveUserHandler implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
 
@@ -25,11 +23,13 @@ public class SaveUserHandler implements RequestHandler<APIGatewayProxyRequestEve
 	@Override
 	public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent request, Context context) {
 		LOG.info("received: the request");
+		String email = request.getPathParameters().get("email");
 
-		String userDetails = request.getPathParameters().get("userDetails");
+//		String userDetails = request.getPathParameters().get("email");
 		String requestBody = request.getBody();
+		List<User> users = new ArrayList<>();
 
-		LOG.debug("will create user: "+ userDetails);
+		LOG.debug("will create user: "+ email);
 
 		ObjectMapper objMapper = new ObjectMapper();
 		APIGatewayProxyResponseEvent response = new APIGatewayProxyResponseEvent();
@@ -44,6 +44,7 @@ public class SaveUserHandler implements RequestHandler<APIGatewayProxyRequestEve
 			response.setBody("User created");
 			LOG.debug("saved user: " + u.getUserName() + " " + u.getEmail());
 			Class.forName("com.mysql.jdbc.Driver");
+			User user;
 
 			connection = DriverManager.getConnection(String.format("jdbc:mysql://%s/%s?user=%s&password=%s",
 					System.getenv("DB_HOST"),
@@ -51,13 +52,25 @@ public class SaveUserHandler implements RequestHandler<APIGatewayProxyRequestEve
 					System.getenv("DB_USER"),
 					System.getenv("DB_PASSWORD")));
 
-			preparedStatement = connection.prepareStatement("INSERT INTO user VALUES (?, ?, ?, ?)");
+			preparedStatement = connection.prepareStatement("INSERT INTO user VALUES (?, ?, ?)");
 			preparedStatement.setString(1, UUID.randomUUID().toString());
 			preparedStatement.setString(2, u.getEmail());
 			preparedStatement.setString(3, u.getUserName());
-			preparedStatement.setString(4, u.getPassword());
 			preparedStatement.execute();
+
+			preparedStatement = connection.prepareStatement("SELECT * FROM user WHERE email = ?");
+			preparedStatement.setString(1, email);
+			resultSet = preparedStatement.executeQuery();
+
+			while (resultSet.next()) {
+				user = new User(resultSet.getString("id"),
+						resultSet.getString("email"),
+						resultSet.getString("userName"));
+				users.add(user);
+			}
+			response.setBody("User selected back after inserted");
 			connection.close();
+
 
 		} catch (IOException e) {
 			LOG.error("Unable to unmarshal JSON for adding a user", e);
